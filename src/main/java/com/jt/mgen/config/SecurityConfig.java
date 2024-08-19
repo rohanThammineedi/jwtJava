@@ -26,20 +26,20 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        UserDetails user = User.withUsername("Basant")
+        UserDetails employee = User.withUsername("Basant")
                 .password(bCryptPasswordEncoder.encode("pwd1"))
-                .roles("USER")
+                .roles("EMPLOYEE")
                 .build();
         UserDetails admin = User.withUsername("Amit")
                 .password(bCryptPasswordEncoder.encode("pwd2"))
-                .roles("ADMIN")
+                .roles("HR")
                 .build();
         UserDetails userAdmin = User.withUsername("Parmesh")
                 .password(bCryptPasswordEncoder.encode("pwd3"))
-                .roles("ADMIN", "USER")
+                .roles("MANAGER", "HR")
                 .build();
 
-        return new InMemoryUserDetailsManager(user, admin, userAdmin);
+        return new InMemoryUserDetailsManager(employee, admin, userAdmin);
     }
 
     @Bean
