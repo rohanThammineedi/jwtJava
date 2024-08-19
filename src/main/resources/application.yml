@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/security
+    username: postgres
+    password: admin
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/jiradb
+    username: postgres
+    password: admin
+  output:
+    ansi:
+      enabled: ALWAYS
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.data: INFO
+    org.springframework.jdbc.datasource.init.ScriptUtils: DEBUG
+    your.package.name: DEBUG
+  pattern:
+    level: "%clr(%5p) %clr([%t])"
