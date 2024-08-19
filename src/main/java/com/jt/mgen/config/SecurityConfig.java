@@ -47,7 +47,7 @@ public class SecurityConfig {
         httpSecurity
                 .authorizeHttpRequests(authorize -> {
                     authorize
-                            .requestMatchers("/security/nonSecurityMethod").permitAll()
+                            .requestMatchers("/security/nonSecurityMethod","/jiraUser/hello").permitAll()
                             .anyRequest().authenticated();
                 })
                 .httpBasic(Customizer.withDefaults());
