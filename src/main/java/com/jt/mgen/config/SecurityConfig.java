@@ -45,8 +45,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> {
                     authorize
+
                             .requestMatchers("/security/nonSecurityMethod","/jiraUser/hello").permitAll()
                             .anyRequest().authenticated();
                 })
