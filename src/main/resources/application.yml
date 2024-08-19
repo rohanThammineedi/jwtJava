@@ -8,10 +8,10 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
-  r2dbc:
-    url: r2dbc:postgresql://localhost:5432/jiradb
-    username: postgres
-    password: admin
+#  r2dbc:
+#    url: r2dbc:postgresql://localhost:5432/jiradb
+#    username: postgres
+#    password: admin
   output:
     ansi:
       enabled: ALWAYS
