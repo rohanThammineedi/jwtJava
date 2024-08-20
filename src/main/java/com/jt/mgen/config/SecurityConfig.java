@@ -1,16 +1,14 @@
 package com.jt.mgen.config;
 
+import com.jt.mgen.service.JiraUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -26,20 +24,7 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        UserDetails employee = User.withUsername("Basant")
-                .password(bCryptPasswordEncoder.encode("pwd1"))
-                .roles("EMPLOYEE")
-                .build();
-        UserDetails admin = User.withUsername("Amit")
-                .password(bCryptPasswordEncoder.encode("pwd2"))
-                .roles("HR")
-                .build();
-        UserDetails userAdmin = User.withUsername("Parmesh")
-                .password(bCryptPasswordEncoder.encode("pwd3"))
-                .roles("MANAGER", "HR")
-                .build();
-
-        return new InMemoryUserDetailsManager(employee, admin, userAdmin);
+        return new JiraUserDetailsService();
     }
 
     @Bean
@@ -48,12 +33,16 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> {
                     authorize
-
-                            .requestMatchers("/security/nonSecurityMethod","/jiraUser/hello").permitAll()
+                            .requestMatchers("/security/nonSecurityMethod", "/jiraUser/hello", "/jiraUser/create").permitAll()
                             .anyRequest().authenticated();
                 })
                 .httpBasic(Customizer.withDefaults());
 
         return httpSecurity.build();
+    }
+
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

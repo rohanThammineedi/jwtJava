@@ -14,12 +14,19 @@ public class JiraUserService {
 
     private final BCryptPasswordEncoder passwordEncoder;
 
+    public static final String DEFAULT_ROLE = "ROLE_USER";
+
     public JiraUserService(JiraUserRepo jiraUserRepo, BCryptPasswordEncoder passwordEncoder) {
         this.jiraUserRepo = jiraUserRepo;
         this.passwordEncoder = passwordEncoder;
     }
 
     public JiraUser createJiraUser(JiraUser jiraUser) {
+        if (jiraUserRepo.count() == 0){
+            jiraUser.setRole("ROLE_SITEADMIN");
+        }else{
+            jiraUser.setRole(DEFAULT_ROLE);
+        }
         jiraUser.setPassword(passwordEncoder.encode(jiraUser.getPassword()));
         return jiraUserRepo.save(jiraUser);
     }
@@ -36,6 +43,9 @@ public class JiraUserService {
         existingJiraUser.setUsername(jiraUser.getUsername());
         existingJiraUser.setPassword(passwordEncoder.encode(jiraUser.getPassword()));
         existingJiraUser.setEmail(jiraUser.getEmail());
+        existingJiraUser.setRole(jiraUser.getRole());
+        existingJiraUser.setDepartment(jiraUser.getDepartment());
+        existingJiraUser.setOrganization(jiraUser.getOrganization());
         return jiraUserRepo.save(existingJiraUser);
     }
 

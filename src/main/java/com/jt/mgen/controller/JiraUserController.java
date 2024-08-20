@@ -23,31 +23,31 @@ public class JiraUserController {
     }
 
     @PostMapping("/create")
-    @PreAuthorize("hasAuthority('ROLE_HR')")
+//    @PreAuthorize("hasAuthority('ROLE_HR')")
     public JiraUser createJiraUser(@RequestBody JiraUser jiraUser) {
         return jiraUserService.createJiraUser(jiraUser);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_HR') or hasAuthority('ROLE_MANAGER')")
+    @PreAuthorize("hasAuthority('ROLE_SITEADMIN') or hasAuthority('ROLE_ADMIN')")
     @GetMapping("/getAll")
     public List<JiraUser> getAllJiraUsers() {
         return jiraUserService.getAllJiraUsers();
     }
 
     @GetMapping("/getById/{id}")
-    @PreAuthorize("hasAuthority('ROLE_EMPLOYEE') or hasAuthority('ROLE_MANAGER') or hasAuthority('ROLE_HR')")
+    @PreAuthorize("hasAuthority('ROLE_SITEADMIN') or hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public JiraUser getJiraUserById(@RequestBody Integer id) {
         return jiraUserService.getJiraUserById(id);
     }
 
     @PutMapping("/update/{id}")
-    @PreAuthorize("hasAuthority('ROLE_HR')")
+    @PreAuthorize("hasAuthority('ROLE_SITEADMIN') or hasAuthority('ROLE_ADMIN')")
     public JiraUser updateJiraUser(@PathVariable Integer id, @RequestBody JiraUser jiraUser) {
         return jiraUserService.updateJiraUser(id, jiraUser);
     }
 
     @DeleteMapping("/delete/{id}")
-    @PreAuthorize("hasAuthority('ROLE_HR')")
+    @PreAuthorize("hasAuthority('ROLE_SITEADMIN') or hasAuthority('ROLE_ADMIN')")
     public String deleteJiraUser(@PathVariable Integer id) {
         return jiraUserService.deleteJiraUser(id);
     }
