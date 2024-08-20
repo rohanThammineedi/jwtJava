@@ -22,7 +22,6 @@ public class JiraUserDetails implements UserDetails {
         authorities = Arrays.stream(jiraUser.getRole().split(","))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
-
     }
 
     @Override
@@ -42,7 +41,7 @@ public class JiraUserDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true; // Ensure the account is not expired
     }
 
     @Override

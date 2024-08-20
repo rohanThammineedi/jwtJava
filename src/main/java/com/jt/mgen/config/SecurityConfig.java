@@ -16,15 +16,12 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final JiraUserDetailsService jiraUserDetailsService;
 
     @Autowired
-    public SecurityConfig(BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public SecurityConfig(BCryptPasswordEncoder bCryptPasswordEncoder, JiraUserDetailsService jiraUserDetailsService) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-    }
-
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return new JiraUserDetailsService();
+        this.jiraUserDetailsService = jiraUserDetailsService;
     }
 
     @Bean
@@ -36,13 +33,9 @@ public class SecurityConfig {
                             .requestMatchers("/security/nonSecurityMethod", "/jiraUser/hello", "/jiraUser/create").permitAll()
                             .anyRequest().authenticated();
                 })
+                .userDetailsService(jiraUserDetailsService) // Use your custom userDetailsService
                 .httpBasic(Customizer.withDefaults());
 
         return httpSecurity.build();
-    }
-
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 }

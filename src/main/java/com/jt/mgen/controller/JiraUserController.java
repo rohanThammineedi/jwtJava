@@ -23,7 +23,6 @@ public class JiraUserController {
     }
 
     @PostMapping("/create")
-//    @PreAuthorize("hasAuthority('ROLE_HR')")
     public JiraUser createJiraUser(@RequestBody JiraUser jiraUser) {
         return jiraUserService.createJiraUser(jiraUser);
     }
@@ -36,7 +35,7 @@ public class JiraUserController {
 
     @GetMapping("/getById/{id}")
     @PreAuthorize("hasAuthority('ROLE_SITEADMIN') or hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
-    public JiraUser getJiraUserById(@RequestBody Integer id) {
+    public JiraUser getJiraUserById(@PathVariable Integer id) {
         return jiraUserService.getJiraUserById(id);
     }
 
@@ -51,6 +50,4 @@ public class JiraUserController {
     public String deleteJiraUser(@PathVariable Integer id) {
         return jiraUserService.deleteJiraUser(id);
     }
-
-
 }
