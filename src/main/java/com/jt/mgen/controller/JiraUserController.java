@@ -1,9 +1,13 @@
 package com.jt.mgen.controller;
 
 import com.jt.mgen.dto.AuthenticationRequest;
+import com.jt.mgen.dto.JwtResponseDto;
+import com.jt.mgen.dto.RefreshTokenRequest;
 import com.jt.mgen.entity.JiraUser;
+import com.jt.mgen.entity.RefreshToken;
 import com.jt.mgen.service.JiraUserJwtService;
 import com.jt.mgen.service.JiraUserService;
+import com.jt.mgen.service.RefreshTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,6 +31,9 @@ public class JiraUserController {
     @Autowired
     private JiraUserJwtService jiraUserJwtService;
 
+    @Autowired
+    private RefreshTokenService refreshTokenService;
+
 
     public JiraUserController(JiraUserService jiraUserService) {
         this.jiraUserService = jiraUserService;
@@ -43,20 +50,38 @@ public class JiraUserController {
     }
 
     @PostMapping("/authenticate")
-    public String authenticate(@RequestBody AuthenticationRequest authenticationRequest) {
+    public JwtResponseDto authenticate(@RequestBody AuthenticationRequest authenticationRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
         );
 
         if (authentication.isAuthenticated()) {
-            // Set the security context
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+//            SecurityContextHolder.getContext().setAuthentication(authentication);
 
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(authenticationRequest.getUsername());
             String accessToken = jiraUserJwtService.generateToken(authenticationRequest.getUsername());
-            return accessToken;
+            return JwtResponseDto.builder()
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken.getToken())
+                    .build();
         } else {
             throw new UsernameNotFoundException("Invalid username or password");
         }
+    }
+
+    @PostMapping("/refreshToken")
+    public JwtResponseDto refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+        return refreshTokenService.findByToken(refreshTokenRequest.getToken())
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getJiraUser)
+                .map(jiraUser -> {
+                    String generatedToken = jiraUserJwtService.generateToken(jiraUser.getUsername());
+                    return JwtResponseDto.builder()
+                            .accessToken(generatedToken)
+                            .refreshToken(refreshTokenRequest.getToken())
+                            .build();
+                })
+                .orElseThrow(() -> new RuntimeException("Invalid refresh token"));
     }
 
 
