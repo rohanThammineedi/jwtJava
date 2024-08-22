@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -18,7 +18,7 @@ public class JiraUserDetailsService implements UserDetailsService {
     private JiraUserRepo jiraUserRepo;
 
     @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) {
@@ -30,7 +30,7 @@ public class JiraUserDetailsService implements UserDetailsService {
     }
 
     public void saveUser(JiraUser jiraUser) {
-        jiraUser.setPassword(bCryptPasswordEncoder.encode(jiraUser.getPassword()));
+        jiraUser.setPassword(passwordEncoder.encode(jiraUser.getPassword()));
         jiraUserRepo.save(jiraUser);
     }
 }
