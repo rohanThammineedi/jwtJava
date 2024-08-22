@@ -1,8 +1,8 @@
 package com.jt.mgen.service;
 
-import com.jt.mgen.entity.RefreshToken;
+//import com.jt.mgen.entity.RefreshToken;
 import com.jt.mgen.repo.JiraUserRepo;
-import com.jt.mgen.repo.RefreshTokenRepository;
+//import com.jt.mgen.repo.RefreshTokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -19,11 +19,6 @@ public class JiraUserJwtService {
     @Autowired
     private KeyPair keyPair;
 
-    @Autowired
-    private RefreshTokenService refreshTokenService;
-
-    @Autowired
-    private RefreshTokenRepository refreshTokenRepository;
 
     @Autowired
     private JiraUserRepo jiraUserRepo;
@@ -37,9 +32,6 @@ public class JiraUserJwtService {
                 .compact();
     }
 
-    public String generateRefreshToken(String username) {
-        return refreshTokenService.createRefreshToken(username).getToken();
-    }
 
     public String extractUsername(String token) {
         return getClaims(token).getSubject();
@@ -65,12 +57,4 @@ public class JiraUserJwtService {
                 .getBody();
     }
 
-    public boolean validateRefreshToken(String token) {
-        RefreshToken refreshToken = refreshTokenRepository.findByToken(token)
-                .orElseThrow(() -> new RuntimeException("Invalid refresh token"));
-        if (refreshToken.getExpiryDate().isBefore(Instant.now())) {
-            throw new RuntimeException("Refresh token expired");
-        }
-        return true;
-    }
 }
