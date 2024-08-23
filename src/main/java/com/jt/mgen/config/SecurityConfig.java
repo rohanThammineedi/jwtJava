@@ -48,7 +48,7 @@ public class SecurityConfig {
         return http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/security/nonSecurityMethod", "/jiraUser/hello",
-                                "/jiraUser/create", "/jiraUser/authenticate", "/jiraUser/refreshToken","/jiraUser/logout").permitAll()
+                                "/jiraUser/create", "/jiraUser/authenticate", "/jiraUser/refreshToken", "/jiraUser/logout").permitAll() // Ensure logout is permitted
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -12,6 +12,7 @@ import com.jt.mgen.service.JiraUserJwtService;
 import com.jt.mgen.service.JiraUserService;
 import com.jt.mgen.service.RefreshTokenService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,6 +26,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/jiraUser")
+@Slf4j
 public class JiraUserController {
 
     private final JiraUserService jiraUserService;
@@ -113,9 +115,11 @@ public class JiraUserController {
 
     @PostMapping("/logout")
     public JiraUserApplicationResponseDTO<String> logout(@RequestBody @Valid RefreshTokenRequest refreshTokenRequest) {
+        log.info("Logout request received for token: {}", refreshTokenRequest.getToken());
         return refreshTokenService.findByToken(refreshTokenRequest.getToken())
                 .map(token -> {
                     refreshTokenService.delete(token);
+                    log.info("Logout successful for token: {}", refreshTokenRequest.getToken());
                     return new JiraUserApplicationResponseDTO<>("Logout successful", null);
                 })
                 .orElseThrow(() -> new TokenExpiredException("Invalid refresh token, Please login again"));
