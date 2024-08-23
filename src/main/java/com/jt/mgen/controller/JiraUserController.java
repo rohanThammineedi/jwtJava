@@ -93,6 +93,7 @@ public class JiraUserController {
         }
     }
 
+
     @PostMapping("/refreshToken")
     public JiraUserApplicationResponseDTO<JwtResponseDto> refreshToken(@RequestBody @Valid RefreshTokenRequest refreshTokenRequest) {
         return refreshTokenService.findByToken(refreshTokenRequest.getToken())
@@ -105,6 +106,16 @@ public class JiraUserController {
                             .refreshToken(refreshTokenRequest.getToken())
                             .build();
                     return new JiraUserApplicationResponseDTO<>(jwtResponse, null);
+                })
+                .orElseThrow(() -> new TokenExpiredException("Invalid refresh token, Please login again"));
+    }
+
+    @PostMapping("/logout")
+    public JiraUserApplicationResponseDTO<String> logout(@RequestBody @Valid RefreshTokenRequest refreshTokenRequest) {
+        return refreshTokenService.findByToken(refreshTokenRequest.getToken())
+                .map(token -> {
+                    refreshTokenService.delete(token);
+                    return new JiraUserApplicationResponseDTO<>("Logout successful", null);
                 })
                 .orElseThrow(() -> new TokenExpiredException("Invalid refresh token, Please login again"));
     }
