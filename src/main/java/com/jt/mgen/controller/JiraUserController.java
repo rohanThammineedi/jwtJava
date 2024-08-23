@@ -53,6 +53,7 @@ public class JiraUserController {
         return new JiraUserApplicationResponseDTO<>(saved, null);
     }
 
+    /*this is login method*/
     @PostMapping("/authenticate")
     public JiraUserApplicationResponseDTO<JwtResponseDto> authenticate(@RequestBody @Valid AuthenticationRequest authenticationRequest) {
         Authentication authentication = authenticationManager.authenticate(
