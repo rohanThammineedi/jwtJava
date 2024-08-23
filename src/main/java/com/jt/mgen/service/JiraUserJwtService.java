@@ -1,6 +1,7 @@
 package com.jt.mgen.service;
 
 //import com.jt.mgen.entity.RefreshToken;
+
 import com.jt.mgen.repo.JiraUserRepo;
 //import com.jt.mgen.repo.RefreshTokenRepository;
 import io.jsonwebtoken.Claims;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.security.KeyPair;
 import java.time.Instant;
 import java.util.Date;
+import java.util.UUID;
 
 @Service
 public class JiraUserJwtService {
@@ -22,6 +24,10 @@ public class JiraUserJwtService {
 
     @Autowired
     private JiraUserRepo jiraUserRepo;
+
+    public String generateRefreshToken() {
+        return UUID.randomUUID().toString();
+    }
 
     public String generateToken(String username) {
         return Jwts.builder()

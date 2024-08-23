@@ -14,4 +14,8 @@ public class JwtResponseDto {
 
     private String accessToken;
     private String refreshToken;
+
+    public JwtResponseDto(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 }
