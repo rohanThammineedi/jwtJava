@@ -55,7 +55,6 @@ public class JiraUserController {
         return new JiraUserApplicationResponseDTO<>(saved, null);
     }
 
-    /*this is login method*/
     @PostMapping("/authenticate")
     public JiraUserApplicationResponseDTO<JwtResponseDto> authenticate(@RequestBody @Valid AuthenticationRequest authenticationRequest) {
         Authentication authentication = authenticationManager.authenticate(
@@ -63,24 +62,20 @@ public class JiraUserController {
         );
 
         if (authentication.isAuthenticated()) {
-            // Generate JWT token
             String accessToken = jiraUserJwtService.generateToken(authenticationRequest.getUsername());
             JwtResponseDto jwtResponse = JwtResponseDto.builder()
                     .accessToken(accessToken)
                     .build();
 
-            // Check if refresh token already exists for the user
             Optional<RefreshToken> existingToken = refreshTokenService.findByJiraUserId(authenticationRequest.getUsername());
             String refreshToken;
             if (existingToken.isPresent()) {
-                // Update the existing token
                 RefreshToken token = existingToken.get();
                 refreshToken = jiraUserJwtService.generateRefreshToken();
                 token.setToken(refreshToken);
                 token.setExpiryDate(calculateExpiryDate());
                 refreshTokenService.save(token);
             } else {
-                // Create a new refresh token
                 refreshToken = jiraUserJwtService.generateRefreshToken();
                 RefreshToken token = new RefreshToken();
                 token.setJiraUserId(authenticationRequest.getUsername());
@@ -95,7 +90,6 @@ public class JiraUserController {
             throw new JiraUserNotFoundException("Invalid username or password");
         }
     }
-
 
     @PostMapping("/refreshToken")
     public JiraUserApplicationResponseDTO<JwtResponseDto> refreshToken(@RequestBody @Valid RefreshTokenRequest refreshTokenRequest) {
@@ -116,6 +110,7 @@ public class JiraUserController {
     @PostMapping("/logout")
     public JiraUserApplicationResponseDTO<String> logout(@RequestBody @Valid RefreshTokenRequest refreshTokenRequest) {
         log.info("Logout request received for token: {}", refreshTokenRequest.getToken());
+        System.out.println("Logout request received for token: " + refreshTokenRequest.getToken());
         return refreshTokenService.findByToken(refreshTokenRequest.getToken())
                 .map(token -> {
                     refreshTokenService.delete(token);
@@ -154,8 +149,6 @@ public class JiraUserController {
     }
 
     private Date calculateExpiryDate() {
-        // Implement your logic to calculate the expiry date
         return new Date(System.currentTimeMillis() + 86400000); // 1 day
     }
-
 }
